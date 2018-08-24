@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Graph {
-    private ArrayList<Integer> state;
+
+    private ArrayList<Integer> childIndex;
+    private ArrayList<Node> traversals;
     private Node head;
     private Node next1, next2, next3, next4, next5, next6;
     private Node next7, next8, next9, next10, next11, next12;
@@ -13,76 +15,62 @@ public class Graph {
     private Node tail;
 
     public Graph(){
-        state = new ArrayList<>();
+//        state = new ArrayList<>();
+        childIndex = new ArrayList<>();
+        for(int i = 0; i < 22; i++){
+            childIndex.add(0);
+        }
+//        transitionCount = new ArrayList<>();
+        initLinkedList();
+        traversals = new ArrayList<>();
+        traversals.add(head);
     }
 
     private void initLinkedList(){
 
-        addState(0, 0, 0, 0, 0, 0);
-        head = new Node(state);
+        head = new Node(addState(0, 0, 0, 0, 0, 0));
 
-        addState(1, 0, 0, 1, 1, 0);
-        next1 = new Node(state);
+        next1 = new Node(addState(1, 0, 0, 1, 1, 0));
 
-        addState(0, 0, 0, 1, 0, 0);
-        next2 = new Node(state);
+        next2 = new Node(addState(0, 0, 0, 1, 0, 0));
 
-        addState(0, 0, 0, 0, 1, 0);
-        next3 = new Node(state);
+        next3 = new Node(addState(0, 0, 0, 0, 1, 0));
 
-        addState(1, 0, 1, 1, 1, 0);
-        next4 = new Node(state);
+        next4 = new Node(addState(1, 0, 1, 1, 1, 0));
 
-        addState(1, 1, 0, 1, 1, 0);
-        next5 = new Node(state);
+        next5 = new Node(addState(1, 1, 0, 1, 1, 0));
 
-        addState(1, 0, 0, 1, 1, 1);
-        next6 = new Node(state);
+        next6 = new Node(addState(1, 0, 0, 1, 1, 1));
 
-        addState(1, 1, 1, 0, 1, 0);
-        next7 = new Node(state);
+        next7 = new Node(addState(1, 1, 1, 0, 1, 0));
 
-        addState(0, 0, 1, 0, 0, 0);
-        next8 = new Node(state);
+        next8 = new Node(addState(0, 0, 1, 0, 0, 0));
 
-        addState(0, 1, 0, 0, 0, 0);
-        next9 = new Node(state);
+        next9 = new Node(addState(0, 1, 0, 0, 0, 0));
 
-        addState(0, 0, 0, 0, 0, 1);
-        next10 = new Node(state);
+        next10 = new Node(addState(0, 0, 0, 0, 0, 1));
 
-        addState(0, 0, 0, 1, 0, 1);
-        next11 = new Node(state);
+        next11 = new Node(addState(0, 0, 0, 1, 0, 1));
 
-        addState(0, 1, 1, 0, 0, 0);
-        next12 = new Node(state);
+        next12 = new Node(addState(0, 1, 1, 0, 0, 0));
 
-        addState(1, 0, 1, 1, 1, 1);
-        next13 = new Node(state);
+        next13 = new Node( addState(1, 0, 1, 1, 1, 1));
 
-        addState(1, 1, 0, 1, 1, 1);
-        next14 = new Node(state);
+        next14 = new Node(addState(1, 1, 0, 1, 1, 1));
 
-        addState(1, 1, 1, 1, 0, 1);
-        next15 = new Node(state);
+        next15 = new Node(addState(1, 1, 1, 1, 0, 1));
 
-        addState(1, 1, 1, 0, 1, 1);
-        next16 = new Node(state);
+        next16 = new Node(addState(1, 1, 1, 0, 1, 1));
 
-        addState(1, 1, 1, 1, 1, 0);
-        next17 = new Node(state);
+        next17 = new Node(addState(1, 1, 1, 1, 1, 0));
 
-        addState(0, 0, 1, 0, 0, 1);
-        next18 = new Node(state);
+        next18 = new Node( addState(0, 0, 1, 0, 0, 1));
 
-        addState(0, 1, 1, 0, 0, 1);
-        next19 = new Node(state);
+        next19 = new Node(addState(0, 1, 1, 0, 0, 1));
 
-        addState(0, 1, 0, 0, 0, 1);
-        next20 = new Node(state);
+        next20 = new Node(addState(0, 1, 0, 0, 0, 1));
 
-        addState(1, 1, 1, 1, 1, 1);
-        tail = new Node(state);
+        tail = new Node(addState(1, 1, 1, 1, 1, 1));
 
         //connect for head
         head.addNext(next1);
@@ -100,6 +88,8 @@ public class Graph {
 
         //connnect for next3
         next3.addPrev(next1);
+        next3.addNext(next4);
+        next3.addNext(next5);
         next3.addNext(next6);
         next3.addNext(next7);
 
@@ -189,19 +179,40 @@ public class Graph {
         tail.addPrev(next19);
     }
 
-    public void addState(int scientist, int human, int human1, int lion, int cow, int grains){
-        state.clear();
+    public ArrayList<Integer> addState(int scientist, int human, int human1, int lion, int cow, int grains){
+        ArrayList<Integer> state = new ArrayList<>();
         state.add(scientist);
         state.add(human);
         state.add(human1);
         state.add(lion);
         state.add(cow);
         state.add(grains);
+
+        return state;
     }
 
     public void breadthFirstSearch(){
+        Node temp;
+        int index = 0, count = 0;
+        while (traversals.size() > 0){
+            temp = traversals.get(0);
+            traversals.remove(0);
+            while(index < temp.getNext().size()){
+                traversals.add(temp.getNextIndex(index));
+                System.out.println(temp.getNextIndex(index).getData()+" "+count);
+                index++;
+                count++;
+            }
 
+            index = 0;
+        }
+        System.out.println("done");
     }
 
+    public static void main(String[] args) {
+        Graph graph = new Graph();
+        graph.breadthFirstSearch();
+    }
 
 }
+

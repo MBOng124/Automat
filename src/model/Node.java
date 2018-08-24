@@ -9,6 +9,8 @@ public class Node {
 
     public Node(ArrayList<Integer> data){
         this.data = data;
+        next = new ArrayList<>();
+        prev = new ArrayList<>();
     }
 
     public Node(){
@@ -45,5 +47,9 @@ public class Node {
 
     public void addPrev(Node previous){
         this.prev.add(previous);
+    }
+
+    public Node getNextIndex(int index){
+        return next.get(index);
     }
 }
